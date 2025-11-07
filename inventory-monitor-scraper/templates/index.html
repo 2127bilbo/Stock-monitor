@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Monitor - Multi-Retailer Stock Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0033 50%, #0d0d2b 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #00d4ff 0%, #8a2be2 50%, #ff00ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .tab:hover {
+            background: rgba(138, 43, 226, 0.2);
+            border-color: rgba(138, 43, 226, 0.6);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(138, 43, 226, 0.3));
+            border-color: #8a2be2;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a0a0a0;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #8a2be2;
+            background: rgba(138, 43, 226, 0.1);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #00d4ff, #8a2be2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(138, 43, 226, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .store-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .store-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 2px solid rgba(138, 43, 226, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .store-item:hover {
+            background: rgba(138, 43, 226, 0.15);
+            border-color: #8a2be2;
+        }
+
+        .store-item.selected {
+            background: rgba(138, 43, 226, 0.25);
+            border-color: #00d4ff;
+        }
+
+        .store-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .store-details {
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+
+        .monitored-items {
+            display: grid;
+            gap: 15px;
+        }
+
+        .monitored-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .monitored-item:hover {
+            background: rgba(138, 43, 226, 0.1);
+            border-color: #8a2be2;
+        }
+
+        .monitored-item.in-stock {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #00d4ff;
+        }
+
+        .item-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        .item-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-badge.in-stock {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+        }
+
+        .status-badge.out-of-stock {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            border: 1px solid #ff4444;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .notification-panel {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #00ff88;
+        }
+
+        .notification-time {
+            font-size: 0.85em;
+            color: #a0a0a0;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+            color: #64b5f6;
+        }
+
+        .alert-warning {
+            background: rgba(255, 152, 0, 0.2);
+            border: 1px solid rgba(255, 152, 0, 0.5);
+            color: #ffb74d;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #81c784;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(138, 43, 226, 0.3);
+            border-top: 3px solid #8a2be2;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(138, 43, 226, 0.5);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(138, 43, 226, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                min-width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .monitored-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Inventory Monitor</h1>
+            <p>Track stock across multiple retailers with real-time notifications</p>
+        </div>
+
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-card">
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">Items Tracked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statInStock">0</div>
+                <div class="stat-label">In Stock</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statOutStock">0</div>
+                <div class="stat-label">Out of Stock</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statNotifications">0</div>
+                <div class="stat-label">Notifications</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('add')">
+                ➕ Add Item
+            </div>
+            <div class="tab" onclick="switchTab('monitor')">
+                📊 Monitored Items (<span id="monitorCount">0</span>)
+            </div>
+            <div class="tab" onclick="switchTab('notifications')">
+                🔔 Notifications (<span id="notificationCount">0</span>)
+            </div>
+        </div>
+
+        <!-- Add Item Tab -->
+        <div id="addTab" class="tab-content active">
+            <div class="section">
+                <h2 class="section-title">Add Item to Monitor</h2>
+                
+                <div class="alert alert-info">
+                    <span>ℹ️</span>
+                    <span>Enter an item ID/SKU and configure monitoring preferences. The app will automatically check for stock changes.</span>
+                </div>
+
+                <form id="addItemForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🏪 Retailer</label>
+                            <select id="retailerSelect" required>
+                                <option value="">Select Retailer...</option>
+                                <option value="Target">Target</option>
+                                <option value="Walmart">Walmart</option>
+                                <option value="Best Buy">Best Buy</option>
+                                <option value="Sam's Club">Sam's Club</option>
+                                <option value="GameStop">GameStop</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>🔢 Item ID / SKU / TCIN</label>
+                            <input type="text" id="itemIdInput" placeholder="e.g., 87729478 (Target TCIN)" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📝 Item Name</label>
+                        <input type="text" id="itemNameInput" placeholder="e.g., PlayStation 5 Digital Edition" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🎯 Monitor Type</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="locationType" value="online" checked>
+                                <span>🌐 Online Stock (National)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="locationType" value="store">
+                                <span>🏬 Store-Specific Stock</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="storeLocationSection" class="hidden">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>📍 Zip Code</label>
+                                <input type="text" id="zipCodeInput" placeholder="e.g., 90210" maxlength="5">
+                            </div>
+
+                            <div class="form-group">
+                                <label>📏 Radius (miles)</label>
+                                <select id="radiusSelect">
+                                    <option value="10">10 miles</option>
+                                    <option value="20" selected>20 miles</option>
+                                    <option value="50">50 miles</option>
+                                    <option value="100">100 miles</option>
+                                    <option value="200">200 miles</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary" onclick="searchStores()">
+                            🔍 Search Stores
+                        </button>
+
+                        <div id="storeListContainer" class="hidden">
+                            <div class="store-list" id="storeList"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>⏱️ Check Interval</label>
+                        <select id="intervalSelect" required>
+                            <option value="1s">Every Second ⚠️ (High Load)</option>
+                            <option value="30s">Every 30 Seconds</option>
+                            <option value="1m">Every Minute</option>
+                            <option value="2m" selected>Every 2 Minutes (Recommended)</option>
+                            <option value="5m">Every 5 Minutes</option>
+                            <option value="15m">Every 15 Minutes</option>
+                            <option value="30m">Every 30 Minutes</option>
+                            <option value="1h">Every Hour</option>
+                            <option value="daily">Once Daily</option>
+                        </select>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <span>⚠️</span>
+                        <span>Very frequent checks (1s-30s) may hit rate limits. Use 2-5 minute intervals for best reliability.</span>
+                    </div>
+
+                    <button type="submit" class="btn">
+                        ✅ Start Monitoring
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Monitor Tab -->
+        <div id="monitorTab" class="tab-content">
+            <div class="section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title">Monitored Items</h2>
+                    <button class="btn btn-secondary btn-small" onclick="checkAllItems()">
+                        🔄 Check All Now
+                    </button>
+                </div>
+
+                <div id="monitoredItemsContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>No items being monitored yet.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Add items from the "Add Item" tab to start tracking inventory.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Tab -->
+        <div id="notificationsTab" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">Recent Notifications</h2>
+                
+                <div id="notificationsContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔕</div>
+                        <p>No notifications yet.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">You'll see alerts here when monitored items come back in stock.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedStore = null;
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+
+            // Refresh data when switching to monitor or notifications
+            if (tabName === 'monitor') {
+                loadMonitoredItems();
+            } else if (tabName === 'notifications') {
+                loadNotifications();
+            }
+        }
+
+        // Toggle store location section
+        document.querySelectorAll('input[name="locationType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const storeSection = document.getElementById('storeLocationSection');
+                if (this.value === 'store') {
+                    storeSection.classList.remove('hidden');
+                } else {
+                    storeSection.classList.add('hidden');
+                    selectedStore = null;
+                }
+            });
+        });
+
+        // Search for stores
+        async function searchStores() {
+            const retailer = document.getElementById('retailerSelect').value;
+            const zipCode = document.getElementById('zipCodeInput').value;
+            const radius = parseInt(document.getElementById('radiusSelect').value);
+
+            if (!retailer || !zipCode) {
+                alert('Please select a retailer and enter a zip code');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/stores/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ retailer, zip_code: zipCode, radius })
+                });
+
+                const data = await response.json();
+                displayStores(data.stores);
+            } catch (error) {
+                console.error('Error searching stores:', error);
+                alert('Failed to search stores. Please try again.');
+            }
+        }
+
+        // Display store results
+        function displayStores(stores) {
+            const container = document.getElementById('storeListContainer');
+            const storeList = document.getElementById('storeList');
+
+            if (stores.length === 0) {
+                storeList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No stores found in this area. Try increasing the radius.</p>';
+                container.classList.remove('hidden');
+                return;
+            }
+
+            storeList.innerHTML = stores.map(store => `
+                <div class="store-item" onclick="selectStore('${store.store_id}', '${store.name}')">
+                    <div class="store-name">${store.name}</div>
+                    <div class="store-details">
+                        📍 ${store.address} • ${store.distance} miles away
+                    </div>
+                </div>
+            `).join('');
+
+            container.classList.remove('hidden');
+        }
+
+        // Select a store
+        function selectStore(storeId, storeName) {
+            // Remove previous selection
+            document.querySelectorAll('.store-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            // Add selection to clicked item
+            event.target.closest('.store-item').classList.add('selected');
+            
+            selectedStore = { store_id: storeId, store_name: storeName };
+        }
+
+        // Add item form submission
+        document.getElementById('addItemForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const locationType = document.querySelector('input[name="locationType"]:checked').value;
+            
+            if (locationType === 'store' && !selectedStore) {
+                alert('Please search for and select a store');
+                return;
+            }
+
+            const itemData = {
+                retailer: document.getElementById('retailerSelect').value,
+                item_id: document.getElementById('itemIdInput').value,
+                item_name: document.getElementById('itemNameInput').value,
+                location_type: locationType,
+                check_interval: document.getElementById('intervalSelect').value
+            };
+
+            if (locationType === 'store') {
+                itemData.store_id = selectedStore.store_id;
+                itemData.store_name = selectedStore.store_name;
+                itemData.zip_code = document.getElementById('zipCodeInput').value;
+            }
+
+            try {
+                const response = await fetch('/api/monitor/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(itemData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Item added to monitoring!');
+                    document.getElementById('addItemForm').reset();
+                    selectedStore = null;
+                    document.getElementById('storeLocationSection').classList.add('hidden');
+                    document.getElementById('storeListContainer').classList.add('hidden');
+                    updateStats();
+                    loadMonitoredItems();
+                }
+            } catch (error) {
+                console.error('Error adding item:', error);
+                alert('Failed to add item. Please try again.');
+            }
+        });
+
+        // Load monitored items
+        async function loadMonitoredItems() {
+            try {
+                const response = await fetch('/api/monitor/list');
+                const data = await response.json();
+                displayMonitoredItems(data.items);
+            } catch (error) {
+                console.error('Error loading items:', error);
+            }
+        }
+
+        // Display monitored items
+        function displayMonitoredItems(items) {
+            const container = document.getElementById('monitoredItemsContainer');
+            
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>No items being monitored yet.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Add items from the "Add Item" tab to start tracking inventory.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="monitored-items">
+                    ${items.map(item => {
+                        const lastCheck = item.last_check ? new Date(item.last_check).toLocaleString() : 'Not checked yet';
+                        const stockStatus = item.in_stock ? 'in-stock' : 'out-of-stock';
+                        const stockText = item.in_stock ? `✓ In Stock (${item.current_quantity})` : '✗ Out of Stock';
+                        
+                        return `
+                            <div class="monitored-item ${stockStatus}">
+                                <div class="item-info">
+                                    <div class="item-name">${item.item_name}</div>
+                                    <div class="item-meta">
+                                        <span>🏪 ${item.retailer}</span>
+                                        <span>🔢 ${item.item_id}</span>
+                                        ${item.location_type === 'store' ? `<span>📍 ${item.store_name}</span>` : '<span>🌐 Online</span>'}
+                                        <span>⏱️ ${item.check_interval}</span>
+                                        ${item.price ? `<span>💰 $${item.price}</span>` : ''}
+                                    </div>
+                                    <div class="item-meta" style="margin-top: 8px;">
+                                        <span>Last Check: ${lastCheck}</span>
+                                    </div>
+                                </div>
+                                <div class="item-actions">
+                                    <span class="status-badge ${stockStatus}">${stockText}</span>
+                                    <button class="btn btn-secondary btn-small" onclick="checkItemNow(${item.id})">
+                                        🔄 Check
+                                    </button>
+                                    <button class="btn btn-danger btn-small" onclick="removeItem(${item.id})">
+                                        🗑️ Remove
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // Check single item
+        async function checkItemNow(itemId) {
+            try {
+                const response = await fetch(`/api/monitor/check/${itemId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadMonitoredItems();
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Error checking item:', error);
+            }
+        }
+
+        // Check all items
+        async function checkAllItems() {
+            try {
+                const response = await fetch('/api/monitor/check-all', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadMonitoredItems();
+                    updateStats();
+                    alert(`✅ Checked ${data.results.length} items!`);
+                }
+            } catch (error) {
+                console.error('Error checking items:', error);
+            }
+        }
+
+        // Remove item
+        async function removeItem(itemId) {
+            if (!confirm('Are you sure you want to stop monitoring this item?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/monitor/remove/${itemId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadMonitoredItems();
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Error removing item:', error);
+            }
+        }
+
+        // Load notifications
+        async function loadNotifications() {
+            try {
+                const response = await fetch('/api/notifications');
+                const data = await response.json();
+                displayNotifications(data.notifications);
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        // Display notifications
+        function displayNotifications(notifications) {
+            const container = document.getElementById('notificationsContainer');
+            
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔕</div>
+                        <p>No notifications yet.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">You'll see alerts here when monitored items come back in stock.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="notification-panel">
+                    ${notifications.map(notif => `
+                        <div class="notification-item">
+                            <div class="notification-title">${notif.message}</div>
+                            <div class="notification-time">
+                                ${new Date(notif.timestamp).toLocaleString()}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Update stats
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                
+                document.getElementById('statTotal').textContent = data.total_items;
+                document.getElementById('statInStock').textContent = data.in_stock;
+                document.getElementById('statOutStock').textContent = data.out_of_stock;
+                document.getElementById('statNotifications').textContent = data.total_notifications;
+                document.getElementById('monitorCount').textContent = data.total_items;
+                document.getElementById('notificationCount').textContent = data.total_notifications;
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+
+        // Auto-refresh monitored items and notifications
+        setInterval(() => {
+            const activeTab = document.querySelector('.tab-content.active');
+            if (activeTab.id === 'monitorTab') {
+                loadMonitoredItems();
+            } else if (activeTab.id === 'notificationsTab') {
+                loadNotifications();
+            }
+            updateStats();
+        }, 5000); // Refresh every 5 seconds
+
+        // Initial load
+        updateStats();
+        loadMonitoredItems();
+    </script>
+</body>
+</html>
