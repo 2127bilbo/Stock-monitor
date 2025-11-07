@@ -1,0 +1,152 @@
+╔════════════════════════════════════════════════════════════════════════╗
+║          🕷️ WEB SCRAPING VERSION - REAL STOCK DATA! 🎉                ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+🎯 WHAT'S NEW: Your app now scrapes REAL retailer websites!
+
+✅ NO MORE FAKE DATA
+   • Real prices (not $399.99 for $35 items!)
+   • Actual stock status  
+   • True availability
+   • Accurate notifications
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 HOW TO UPDATE (5 MINUTES)
+
+STEP 1: Update app.py on GitHub
+   1. Go to: https://github.com/2127h11ba/Stock-monitor
+   2. Click on "inventory-monitor-app" folder
+   3. Click on "app.py"
+   4. Click pencil icon (Edit)
+   5. Delete ALL content
+   6. Open the NEW app.py from this folder
+   7. Copy and paste ENTIRE content
+   8. Scroll down, click "Commit changes"
+
+STEP 2: Update requirements.txt on GitHub
+   1. Click on "requirements.txt" in your repo
+   2. Click pencil icon (Edit)
+   3. Replace with exactly this:
+
+Flask==3.0.0
+requests==2.31.0
+gunicorn==21.2.0
+beautifulsoup4==4.12.2
+lxml==5.1.0
+
+   4. Click "Commit changes"
+
+STEP 3: Render Auto-Deploys
+   • Wait 2-3 minutes
+   • Check Render dashboard
+   • Build will start automatically
+   • App will redeploy with web scraping!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ TESTING YOUR POKEMON CARDS
+
+Your Items:
+   Target TCIN: 94884496
+   Walmart ID: 17785924366
+
+After Update:
+   1. Go to your app
+   2. Add these items
+   3. Wait 2 minutes
+   4. Click "Check" button
+   5. Prices should be REAL now (~$35, not $399!)
+   6. Stock status will be ACCURATE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎮 HOW IT WORKS NOW
+
+For Each Check:
+   1. Visits actual retailer website
+   2. Reads product page HTML
+   3. Looks for "Add to Cart" button
+   4. Checks for "Out of Stock" messages
+   5. Extracts real price
+   6. Reports TRUE status!
+
+Example:
+   Target: Visits target.com/p/A-94884496
+   Walmart: Visits walmart.com/ip/17785924366
+   Gets REAL data from pages!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ BEST PRACTICES
+
+Recommended Settings:
+   ✅ Check interval: 2-5 minutes
+   ✅ Items monitored: 10-15 max
+   ✅ Monitor type: Online
+   ✅ Multiple retailers: YES!
+
+Avoid:
+   ❌ 1 second intervals (will get blocked)
+   ❌ 50+ items at once
+   ❌ Too many requests
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔍 FINDING ITEM IDs
+
+Target (TCIN):
+   URL: target.com/p/A-94884496
+   Item ID: 94884496 (number after "A-")
+
+Walmart (Item ID):
+   URL: walmart.com/ip/17785924366
+   Item ID: 17785924366 (number after "ip/")
+
+Best Buy (SKU):
+   URL: bestbuy.com/site/XXXXX.p?skuId=6426149
+   SKU: 6426149
+
+GameStop (SKU):
+   Look in URL or on product page
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 FOR YOUR FRIDAY RELEASE
+
+Setup NOW:
+   1. Update app with web scraping (above)
+   2. Add your Pokemon card items
+   3. Set 2-minute check intervals
+   4. Monitor Target AND Walmart
+   5. Keep app open on phone
+
+On Friday:
+   • App checks every 2 minutes
+   • When stock goes live (0 → available)
+   • You get REAL notification
+   • Buy immediately!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 FILES IN THIS PACKAGE
+
+• app.py                    NEW - Web scraping code
+• requirements.txt          NEW - Includes BeautifulSoup
+• templates/index.html      Same UI (no changes)
+• WEB_SCRAPING_GUIDE.md     Detailed documentation
+• QUICK_UPDATE.txt          This file!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎊 YOU'RE READY!
+
+After updating:
+   ✅ Real prices from websites
+   ✅ Actual stock status
+   ✅ True notifications
+   ✅ Ready for Friday release!
+
+Read WEB_SCRAPING_GUIDE.md for full details!
+
+🚀 Update now and test before Friday!
